@@ -215,7 +215,7 @@ if [ $remove -eq 1 -o $auto -eq 1 ]; then
 			echo "# $cmd"
 		else
 			$cmd
-		  fi
+		fi
 	fi
 	done
 	exit 0

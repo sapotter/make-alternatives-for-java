@@ -218,7 +218,7 @@ update-alternatives --list java
 /opt/java/jdk1.8.0/jre/bin/java
 /opt/java/jdk11.0/bin/java
 ----
-Display informations about the link group which name is the master link:
+Display information about the link group which name is the master link:
 ----
 update-alternatives --display java
 java - auto mode

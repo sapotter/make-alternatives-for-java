@@ -105,8 +105,8 @@ shift $((OPTIND-1))
 [ "${1:-}" = "--" ] && shift
 
 if [[ $(( install + remove )) -eq 2 ]]; then
-  echo 'Flags "-i" and "-r" cannot be both set.'
-  exit 1
+	echo 'Flags "-i" and "-r" cannot be both set.'
+	exit 1
 fi
 [[ $(( install + remove + switchalt + auto )) -eq 0 ]] || [ $dryrun -eq 1 ] \
 && dryrun=1; action=${action:-dry-run}
@@ -141,8 +141,8 @@ base_cmd="update-alternatives $action"
 # Fill array with exes from jre/bin if any.
 [ -e "$JAVA_HOME_ROOT/jre/bin" ] && jrebin=$(ls $JAVA_HOME_ROOT/jre/bin/*)
 if [ -e "$JAVA_HOME_ROOT/jre/lib" ]; then
-  jrelib=$(printf '%s\n' ${JEXTRAS[@]} | egrep "jre/lib")
-  jrebin=(${jrebin[@]} ${jrelib[@]})
+	jrelib=$(printf '%s\n' ${JEXTRAS[@]} | egrep "jre/lib")
+	jrebin=(${jrebin[@]} ${jrelib[@]})
 fi
 
 # Install
@@ -156,7 +156,7 @@ if [ $install -eq 1 ]; then
 			# Exclude .cgi and .ini stuff.
 			[[ $pathexe =~ \.cgi$ ]] || [[ $pathexe =~ \.ini$ ]] && continue
 
-  		name=$(basename $pathexe)
+			name=$(basename $pathexe)
 			linkbin=$target_root/bin/$name
 
 			if [[ $pathexe =~ ${JAVA_HOME_ROOT}/(bin|lib) ]]; then
@@ -180,45 +180,45 @@ if [ $install -eq 1 ]; then
 			cmd="$base_cmd $linkbin $name $pathexe $priority"
 			[ "$man1name" != 'xxx' ] && cmd="$cmd --slave $linkman/$man1name $man1name $pathman/$man1name"
 			if [ $dryrun -eq 1 ]; then
-        echo "$cmd"
-      else
-        $cmd
-      fi
+				echo "$cmd"
+			else
+				$cmd
+			fi
 		fi
 	done
-  exit 0
+	exit 0
 fi
 
 # Remove by group or set group to auto
 if [ $remove -eq 1 -o $auto -eq 1 ]; then
-  if [ $auto -eq 1 ]; then
-    echo "Switchingjava alternatives for $JAVA_HOME_ROOT to auto mode"
-  else
-  	echo "Removing java alternatives for $JAVA_HOME_ROOT"
-  fi
+	if [ $auto -eq 1 ]; then
+		echo "Switchingjava alternatives for $JAVA_HOME_ROOT to auto mode"
+		else
+		echo "Removing java alternatives for $JAVA_HOME_ROOT"
+	fi
 
 	for pathexe in $JAVA_HOME_ROOT/jre/bin/* $JAVA_HOME_ROOT/bin/* ${JEXTRAS[@]}
 	do
 		if [ -x "$pathexe" ]; then
 
-			# Exclude .cgi and .ini stuff.
-			[[ $pathexe =~ \.cgi$ ]] || [[ $pathexe =~ \.ini$ ]] && continue
+		# Exclude .cgi and .ini stuff.
+		[[ $pathexe =~ \.cgi$ ]] || [[ $pathexe =~ \.ini$ ]] && continue
 
-			name=$(basename $pathexe)
+		name=$(basename $pathexe)
 
-      if [ $auto -eq 1 ]; then
-        cmd="$base_cmd $name"
-      else
-  			cmd="$base_cmd $name $pathexe"
-      fi
-			if [ $dryrun -eq 1 ]; then
-        echo "# $cmd"
-      else
-        $cmd
-      fi
+		if [ $auto -eq 1 ]; then
+			cmd="$base_cmd $name"
+		else
+			cmd="$base_cmd $name $pathexe"
 		fi
+		if [ $dryrun -eq 1 ]; then
+			echo "# $cmd"
+		else
+			$cmd
+		  fi
+	fi
 	done
-  exit 0
+	exit 0
 fi
 
 # Swtich to another alternative.
@@ -233,30 +233,30 @@ if [ $switchalt -eq 1 ]; then
 			[[ $pathexe =~ \.cgi$ ]] || [[ $pathexe =~ \.ini$ ]] && continue
 
 			name=$(basename $pathexe)
-      docmd="update-alternatives --get-selections | egrep '^$name\s+' | awk '{ print \$3; }'"
-      curalt=$(eval $docmd)
-      # Nothing to do if they match.
-      [[ $curalt =~ $pathexe ]] && continue
+			docmd="update-alternatives --get-selections | egrep '^$name\s+' | awk '{ print \$3; }'"
+			curalt=$(eval $docmd)
+			# Nothing to do if they match.
+			[[ $curalt =~ $pathexe ]] && continue
 
 			if [[ $pathexe =~ ${JAVA_HOME_ROOT}/(bin|lib) ]]; then
 				# Do not switch if already in jre/(bi|lib).
 				if printf '%s\n' ${jrebin[@]} | egrep -q "${name}$"; then
 					# echo "$name found in jre/(bin|lib)  ..."
-          # pathexe="$JAVA_HOME_ROOT/jre/$BASH_REMATCH[1]/$name"
-          echo "Skipping $pathexe already in jre/bin ..."
-          continue
+					# pathexe="$JAVA_HOME_ROOT/jre/$BASH_REMATCH[1]/$name"
+					echo "Skipping $pathexe already in jre/bin ..."
+					continue
 				fi
-      fi
+			fi
 
 			cmd="$base_cmd $name $pathexe"
 			if [ $dryrun -eq 1 ]; then
-        echo "# $curalt -> $cmd"
-      else
-        $cmd
-      fi
+				echo "# $curalt -> $cmd"
+			else
+				$cmd
+			fi
 		fi
 	done
-  exit 0
+  	exit 0
 fi
 
 [[ $(( install + remove + switchalt )) -eq 0 ]] && echo "There is nothing to do!!!"
